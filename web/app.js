@@ -86,9 +86,19 @@
     modoActual = d.modo || modoActual;
     el.botones.forEach((b) => b.classList.toggle("activo", b.dataset.modo === modoActual));
 
-    // el velo solo aparece si no hay ningún frame todavía
+    // "Detener" deja el análisis en pausa: sin frames no es un fallo, y el
+    // usuario no debe quedarse mirando "conectando…" para siempre.
+    const detenido = String(d.modo || "").toLowerCase() === "detenido";
+    if (detenido) {
+      el.badge.textContent = "DETENIDO";
+      el.badge.title = "El análisis está en pausa";
+      el.aviso.textContent = "";
+    }
+
+    // el velo aparece si no hay ningún frame todavía, o si está en pausa
     const sinFrame = nivel === "NO_SIGNAL" && !Number.isFinite(Number(d.timestamp));
-    el.velo.classList.toggle("oculto", !sinFrame);
+    el.velo.textContent = detenido ? "Análisis detenido — pulsá ▶ Iniciar" : "conectando…";
+    el.velo.classList.toggle("oculto", !(sinFrame || detenido));
   }
 
   function error(msg) {
@@ -107,7 +117,6 @@
       pintar(d);
       fallos = 0;
       el.aviso.textContent = "";
-      el.velo.classList.add("oculto");
     } catch (e) {
       fallos += 1;
       if (fallos > 2) error("Sin conexión con el servicio (" + e.message + ")");
