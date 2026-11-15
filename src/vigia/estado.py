@@ -264,8 +264,15 @@ class Estado:
 
     def set_camara_url(self, url: str) -> str:
         url = (url or "").strip()
+        # Orden de candados documentado: _lock_config -> _lock_estado.
         with self._lock_config:
             self._camara_url = url
+        # El snapshot que consume /api/estado debe reflejar el cambio al
+        # instante. Sin esto, con la cámara caída (NO_SIGNAL) el watchdog
+        # republica estados derivados del anterior y la UI seguía mostrando
+        # la URL vieja, como si el POST no se hubiera aplicado.
+        with self._lock_estado:
+            self._estado = replace(self._estado, camara_url=url)
         return url
 
     def get_ajustes(self) -> Dict[str, Any]:

@@ -210,6 +210,11 @@ class VigiaHandler(http.server.BaseHTTPRequestHandler):
 
     def _serve_api_estado(self) -> None:
         datos = self.estado.get_estado().a_dict()
+        # La configuración vigente manda sobre el snapshot: si la cámara está
+        # caída el hilo de visión no republica y el snapshot puede quedar
+        # desfasado respecto de lo que el POST acaba de aplicar.
+        datos["camara_url"] = self.estado.get_camara_url() or datos.get("camara_url", "")
+        datos["modo"] = self.estado.get_modo() or datos.get("modo", "")
         datos["uptime_s"] = round(self.estado.uptime_s(), 1)
         datos["ajustes"] = self.estado.get_ajustes()
         self._responder_json(datos)
