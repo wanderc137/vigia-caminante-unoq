@@ -31,7 +31,7 @@ El desarrollo se hace en la notebook y se copia a la placa. Son dos copias del m
 
 | Ubicación | Rol | Ruta |
 |---|---|---|
-| Notebook | Desarrollo, edición, tests | `/home/jma/proyectos/vigia-caminante-unoq` |
+| Notebook | Desarrollo, edición, tests | `/home/jma/Documents/Proyects/OpenCode/AG.CreadorContenido/proyectos/vigia-caminante-unoq` |
 | Arduino UNO Q | Producción / feria | `/home/arduino/vigia-caminante-unoq` |
 
 ### La placa
@@ -421,7 +421,7 @@ Salida esperada de puertos: cuatro líneas, una por servicio, escuchando en `0.0
 ### Desde la notebook (forma normal)
 
 ```bash
-cd /home/jma/proyectos/vigia-caminante-unoq
+cd /home/jma/Documents/Proyects/OpenCode/AG.CreadorContenido/proyectos/vigia-caminante-unoq
 ./scripts/desplegar.sh
 ```
 
@@ -735,7 +735,7 @@ ss -ltnp | grep 8030
 crontab -l | grep vigia-caminante-unoq
 
 # Actualizar desde la notebook
-cd /home/jma/proyectos/vigia-caminante-unoq
+cd /home/jma/Documents/Proyects/OpenCode/AG.CreadorContenido/proyectos/vigia-caminante-unoq
 ./scripts/desplegar.sh
 ```
 

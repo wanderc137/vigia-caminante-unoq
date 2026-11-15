@@ -867,7 +867,7 @@ placa, que ya los tiene.
 
 ```bash
 # desde la notebook de desarrollo
-cd /home/jma/proyectos/vigia-caminante-unoq
+cd /home/jma/Documents/Proyects/OpenCode/AG.CreadorContenido/proyectos/vigia-caminante-unoq
 ./scripts/desplegar.sh
 ```
 

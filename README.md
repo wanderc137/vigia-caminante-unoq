@@ -350,7 +350,7 @@ No hay cables de señal. Hay tres equipos y una red. Este es el cableado complet
 
 ```
   NOTEBOOK DE DESARROLLO                        ARDUINO UNO Q
-  /home/jma/proyectos/…                         /home/arduino/vigia-caminante-unoq
+  ~/Documents/…/proyectos/vigia-caminante-unoq  /home/arduino/vigia-caminante-unoq
   ┌───────────────────────┐    SSH :2222       ┌──────────────────────────────┐
   │ scripts/desplegar.sh  │───(tar|ssh)───────►│ src/   web/   scripts/       │
   │ ~/.ssh/unoq_key       │   sin rsync        │ config.env (no versionado)   │
@@ -473,7 +473,7 @@ Variables principales (todas con default seguro si faltan):
 
 ```bash
 # desde la notebook, en la raíz del proyecto
-cd /home/jma/proyectos/vigia-caminante-unoq
+cd /home/jma/Documents/Proyects/OpenCode/AG.CreadorContenido/proyectos/vigia-caminante-unoq
 ./scripts/desplegar.sh
 ```
 
