@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Vigía Caminante">
+  <rect width="64" height="64" rx="14" fill="#0b0f14"/>
+  <rect x="6" y="6" width="52" height="52" rx="10" fill="none" stroke="#22c55e" stroke-width="4"/>
+  <path d="M32 20c-8 0-14 6.2-15.8 10.4C18 34.6 24 41 32 41s14-6.4 15.8-10.6C46 26.2 40 20 32 20z"
+        fill="none" stroke="#e7eef7" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="32" cy="30.5" r="5" fill="#22c55e"/>
+</svg>

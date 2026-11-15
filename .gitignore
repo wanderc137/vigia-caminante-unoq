@@ -1,0 +1,17 @@
+data/
+config.env
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.log.1
+*.pid
+*.bin
+*.elf
+*.hex
+build/
+.venv/
+venv/
+.DS_Store
+PLAN.md
+AUDIT_REPORT.md

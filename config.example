@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# Vigía Caminante UNO Q — configuración de ejemplo
+# Copiar a config.env y ajustar.  Formato KEY=VALOR (sin espacios, sin comillas).
+# ---------------------------------------------------------------------------
+
+# Servidor web
+PS_PORT=8030
+PS_HOST=0.0.0.0
+
+# Cámara (IP Webcam en el teléfono Android)
+# CAM_URL puede ser la base (http://192.168.1.9:8080) o la URL completa del
+# stream MJPEG (http://192.168.1.9:8080/video).  Ambas formas son válidas.
+CAM_URL=http://192.168.1.9:8080
+CAM_MJPEG_PATH=/video
+CAM_TIMEOUT_MS=5000
+CAM_RECONNECT_BACKOFF_SEC=5
+
+# Procesamiento
+ANCHO_PROCESO=320
+ALTO_PROCESO=569
+FPS_TARGET=15.0
+JPEG_CALIDAD=70
+BORDE_GROSOR=12
+# Ancho del vídeo entregado al navegador. 540 es nítido en un celular y
+# mantiene el servicio por encima de 10 fps; 0 deja el tamaño original.
+ANCHO_SALIDA=540
+
+# Visión: sustracción de fondo (MOG2)
+BG_HISTORY=200
+BG_VAR_THRESHOLD=25
+BG_DETECT_SHADOWS=False
+MORPH_CLOSE_K=7
+MORPH_OPEN_K=5
+AREA_MINIMA_PX=200
+# Umbral de "amenaza máxima": un objeto que cubre más de esta fracción del
+# cuadro (colisión inminente) se puntúa al 100 %, nunca se descarta.
+AREA_MAXIMA_REL=0.95
+ASPECTO_MAX=5.0
+
+# Corredor de riesgo (coordenadas normalizadas 0..1)
+CORREDOR_Y_MIN=0.35
+CORREDOR_X_MIN=0.25
+CORREDOR_X_MAX=0.75
+
+# Pesos del score individual (suma = 1.0)
+PESO_CERCANIA=0.25
+PESO_VELOCIDAD=0.20
+PESO_LOOMING=0.25
+PESO_AREA=0.15
+PESO_TTC=0.15
+
+# Umbrales de velocidad / crecimiento
+VEL_Y_CRITICA=150.0
+VEL_Y_MIN_TTC=20.0
+LOOM_CRITICO=2.0
+AREA_PEQUENA=0.02
+AREA_GRANDE=0.20
+TTC_CRITICO=2.0
+
+# Suavizado e histéresis
+TAU_EMA=0.3
+UMBRAL_ROJO_IN=0.70
+UMBRAL_ROJO_OUT=0.55
+UMBRAL_AMBAR_IN=0.40
+UMBRAL_AMBAR_OUT=0.25
+MIN_TIEMPO_ROJO_MS=800
+
+# Vigilancia de señal
+WATCHDOG_MS=2000
+
+# Registro
+LOG_LEVEL=INFO
+LOG_FILE=data/vigia.log
+
+# Modo inicial: camara | demo | detenido
+MODO=camara

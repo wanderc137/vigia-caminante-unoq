@@ -1,0 +1,12 @@
+# Dependencias de Vigía Caminante UNO Q
+#
+# Todas son stdlib de Python 3.13 EXCEPTO OpenCV y numpy, que ya vienen
+# instalados en el lado Linux (QCC711) de la Arduino UNO Q:
+#
+#   python3 -c "import cv2, numpy; print(cv2.__version__, numpy.__version__)"
+#   -> 4.10.0 2.2.4
+#
+# NO instalar nada en la placa (sin pip, sin sudo, sin paquetes del sistema).
+# Este archivo es solo documental.
+numpy==2.2.4
+opencv-python==4.10.0

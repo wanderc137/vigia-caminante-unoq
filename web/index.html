@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f14">
+  <title>Vigía Caminante · UNO Q</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body data-nivel="NO_SIGNAL">
+  <header class="cabecera">
+    <div class="marca">
+      <svg class="logo" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5C6.5 5 2.7 9.2 1.5 12c1.2 2.8 5 7 10.5 7s9.3-4.2 10.5-7C21.3 9.2 17.5 5 12 5z"
+              fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="12" cy="12" r="3.2" fill="currentColor"/>
+      </svg>
+      <span class="titulo">Vigía Caminante</span>
+      <span class="placa">UNO&nbsp;Q</span>
+    </div>
+    <div id="badge" class="badge" role="status" aria-live="polite">SIN SEÑAL</div>
+  </header>
+
+  <main class="contenido">
+    <section class="escenario">
+      <div id="marco" class="marco">
+        <img id="video" src="/stream" alt="Vista de la cámara con el borde de riesgo y las detecciones">
+        <div id="velo" class="velo">conectando…</div>
+      </div>
+      <p id="mensaje" class="mensaje">Iniciando servicio…</p>
+    </section>
+
+    <section class="metricas" aria-label="Métricas de riesgo">
+      <article class="tarjeta score">
+        <h2>Riesgo</h2>
+        <p><strong id="score">0</strong><span>%</span></p>
+        <div class="barra"><div id="barra-score" class="relleno"></div></div>
+      </article>
+      <article class="tarjeta">
+        <h2>TTC</h2>
+        <p id="ttc" class="valor">—</p>
+        <p class="pie">tiempo al contacto</p>
+      </article>
+      <article class="tarjeta">
+        <h2>FPS</h2>
+        <p id="fps" class="valor">0.0</p>
+        <p class="pie">procesando</p>
+      </article>
+      <article class="tarjeta">
+        <h2>Objetos</h2>
+        <p id="objetos" class="valor">0</p>
+        <p class="pie">en movimiento</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <label for="url">URL de la cámara (IP Webcam)</label>
+      <div class="fila">
+        <input id="url" type="text" inputmode="url" spellcheck="false"
+               placeholder="http://192.168.1.9:8080" autocomplete="off">
+        <button id="aplicar" class="boton secundario" type="button">Aplicar</button>
+      </div>
+      <div class="botones">
+        <button class="boton" data-modo="camara" type="button">Iniciar</button>
+        <button class="boton" data-modo="detenido" type="button">Detener</button>
+        <button class="boton" data-modo="demo" type="button">Demo</button>
+      </div>
+      <p id="aviso" class="aviso" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="detalle">
+      <div><span>Modo</span><strong id="modo">camara</strong></div>
+      <div><span>Latencia</span><strong id="latencia">0 ms</strong></div>
+      <div><span>Edad del frame</span><strong id="edad">—</strong></div>
+      <div><span>Servicio</span><strong id="uptime">—</strong></div>
+    </section>
+  </main>
+
+  <footer class="pie-pagina">
+    <p>El borde del vídeo indica el riesgo: <span class="chi verde">verde</span> paso libre ·
+      <span class="chi ambar">ámbar</span> atención · <span class="chi rojo">rojo</span> peligro ·
+      <span class="chi gris">gris</span> sin señal.</p>
+    <p class="tenue">Arduino UNO Q · STM32U585 + Linux · procesamiento local, sin nube.</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
