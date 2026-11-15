@@ -1020,3 +1020,55 @@ feria no puede morir por un frame raro.
   Visión clásica en CPU · 12 fps · sin GPU · sin nube · sin pines<br>
   <em>Un semáforo que se explica solo.</em>
 </p>
+
+## Ficha de evaluación
+
+**Madurez global: 4.2/5**
+
+| Criterio | Nota | Evidencia |
+|---|---:|---|
+| Madurez | 4/5 | Versión 1.0.0 con 38 tests, tres ciclos de auditoría, 13 hallazgos corregidos y servicio desplegado en 192.168.1.5:8030. La lógica de riesgo es heurística y no está validada contra accidentes reales. |
+| Reproducibilidad | 4/5 | Despliegue por tar+SSH y configuración por archivo; las cifras de 10,3–14,0 fps, 36–122 ms y 190–230 MB de RSS están medidas. Requiere un teléfono con IP Webcam y una IP estable. |
+| Documentación | 4/5 | README y bitácora detallan pipeline, pesos del score, endpoints y los 13 hallazgos con identificador. No incluye una suite de validación en escenarios reales. |
+| Honestidad de límites | 5/5 | Afirma que no es seguridad certificada, que el gris significa «no sé», que el HTTP va sin cifrar y que una cámara en mano genera falsos riesgos durante cerca de un segundo. |
+| Valor demostrativo | 4/5 | Muestra análisis de video en tiempo real en la UNO Q con OpenCV preinstalado, sin GPU ni modelos, y publica latencias y fps medidos. |
+| Facilidad de despliegue | 4/5 | scripts/desplegar.sh crea config.env, ajusta cámara y puerto, instala arranque por cron y reinicia. No usa systemd ni sudo; el stop no es definitivo porque un guardián revive el proceso. |
+
+Está pensado para quien quiera un aviso visual de proximidad en una UNO Q sin nube, y para estudiar visión clásica embebida con métricas reales. La limitación que más pesa es que no sustituye un sensor de seguridad: sin WiFi o con poca luz solo puede decir que no sabe.
+
+## Lo que no funcionó
+
+### v1.0.0 · I-001 — El objeto que llenaba el cuadro nunca daba rojo
+
+El primer filtro descartaba contornos con área relativa mayor a 0,7, justo el caso de un objeto a punto de colisionar. Se cambió a un umbral de amenaza máxima de 0,95 y un score 1,0 que evita la media exponencial; además se agregó una calibración de cinco cuadros para el fondo inicial de MOG2.
+
+### v1.0.0 · I-002 e I-003 — Configuración en cero rompía el cálculo
+
+Un POST con loom_critico=0 provocaba ZeroDivisionError y watchdog_ms=0 dejaba el stream en NO_SIGNAL permanente. Se validó en dos capas: rechazo 400 en la API y un piso en el código.
+
+### v1.0.0 · I-004 — URL de cámara permitía SSRF
+
+La URL aceptaba destinos como 127.0.0.1:8000 o la propia IP de la placa, lo que permitía consultar servicios internos. Ahora se bloquean loopback, link-local, la IP propia y nombres de metadatos, sin bloquear por defecto todos los rangos privados.
+
+### v1.0.0 · I-006 e I-007 — JPEG vacío y partes MJPEG fragmentadas
+
+Un imencode fallido producía un JPEG vacío que rompía el multipart, y las partes del stream llegaban cortadas. Se valida el buffer, se reenvía el último cuadro válido, se incrusta un JPEG gris mínimo y se acumulan hasta 2 MB hasta encontrar el boundary.
+
+## Preguntas típicas
+
+**¿Qué es Vigía Caminante?**
+
+Es un asistente visual que analiza el video de un teléfono con IP Webcam y publica un stream con borde verde, ámbar o rojo según el riesgo de colisión frontal. El análisis corre en la Arduino UNO Q y no sale de la LAN.
+
+**¿Qué no hace?**
+
+No mide distancias en metros ni certifica seguridad, no graba historial y no funciona sin red. Tampoco distingue personas de otros obstáculos: aplica una heurística de cercanía, velocidad, crecimiento aparente y tiempo hasta el contacto.
+
+**¿Cómo se ejecuta o despliega?**
+
+Se despliega con scripts/desplegar.sh, que copia el proyecto por SSH, genera config.env y deja el servicio en el puerto 8030. Se administra con scripts/servicio.sh y el estado se consulta en /api/estado y /health.
+
+**¿Qué se puede reutilizar?**
+
+El pipeline de reducción a 320 px, sustracción de fondo, seguimiento por IoU y score por objeto es adaptable a otros avisos de proximidad. También sirven el watchdog de cuadros, la validación de configuración y el servidor MJPEG sin dependencias.
+
