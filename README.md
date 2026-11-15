@@ -1000,8 +1000,8 @@ feria no puede morir por un frame raro.
 | Tests | **38/38 OK** |
 | Auditoría de código | **Aprobado — sin incidencias** (3 ciclos, 13 hallazgos corregidos) |
 | Desplegado en placa | Sí, corriendo en `192.168.1.5:8030` |
-| Repositorio público | **Pendiente de publicación** |
-| Licencia | Sin licencia declarada todavía |
+| Repositorio público | **Publicado** — wanderc137/vigia-caminante-unoq |
+| Licencia | **MIT** — archivo LICENSE, © 2026 wanderc137 |
 
 ### Documentación
 
