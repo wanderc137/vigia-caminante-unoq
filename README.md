@@ -26,17 +26,18 @@
 7. [Diagrama de conexión](#-diagrama-de-conexión)
 8. [Arquitectura del software](#-arquitectura-del-software)
 9. [Puesta en marcha](#-puesta-en-marcha)
-10. [Cómo se opera en la feria](#-cómo-se-opera-en-la-feria)
-11. [La página web](#-la-página-web)
-12. [API en 30 segundos](#-api-en-30-segundos)
-13. [Calibración](#-calibración)
-14. [Rendimiento medido](#-rendimiento-medido)
-15. [Tests](#-tests)
-16. [Estructura del repositorio](#-estructura-del-repositorio)
-17. [Problemas frecuentes](#-problemas-frecuentes)
-18. [Advertencias y límites](#️-advertencias-y-límites)
-19. [Notas de ingeniería que valen la pena](#-notas-de-ingeniería-que-valen-la-pena)
-20. [Estado del proyecto](#-estado-del-proyecto)
+10. [Servicio en la placa (producción)](#servicio-produccion)
+11. [Cómo se opera en la feria](#-cómo-se-opera-en-la-feria)
+12. [La página web](#-la-página-web)
+13. [API en 30 segundos](#-api-en-30-segundos)
+14. [Calibración](#-calibración)
+15. [Rendimiento medido](#-rendimiento-medido)
+16. [Tests](#-tests)
+17. [Estructura del repositorio](#-estructura-del-repositorio)
+18. [Problemas frecuentes](#-problemas-frecuentes)
+19. [Advertencias y límites](#️-advertencias-y-límites)
+20. [Notas de ingeniería que valen la pena](#-notas-de-ingeniería-que-valen-la-pena)
+21. [Estado del proyecto](#-estado-del-proyecto)
 
 ---
 
@@ -500,7 +501,7 @@ cd ~/vigia-caminante-unoq
 ./scripts/servicio.sh restart
 ./scripts/servicio.sh logs 80
 ./scripts/servicio.sh logs -f
-./scripts/servicio.sh boot-enable    # arranque automático por cron @reboot
+./scripts/servicio.sh boot-enable    # @reboot; los guardianes ya están instalados
 ```
 
 Verificación rápida desde cualquier equipo de la LAN:
@@ -551,6 +552,31 @@ python3 src/main.py /ruta/a/otro.env
 ```
 
 En primer plano se ve el log por consola, con `Ctrl+C` se apaga limpio (SIGINT/SIGTERM).
+
+---
+
+<a id="servicio-produccion"></a>
+## 🛰️ Servicio en la placa (producción)
+
+En la UNO Q el Vigía corre como servicio en **<http://192.168.1.5:8030/>**. Arranca solo al
+bootear (cron `@reboot` con 20 s de espera) y tiene **dos guardianes**: uno lo levanta si el
+proceso muere (cada 2 min) y otro lo reinicia si `/health` deja de responder (cada 10 min).
+No hay que hacer nada para que vuelva tras un corte.
+
+Los cuatro comandos del día a día, desde `~/vigia-caminante-unoq` en la placa:
+
+```bash
+./scripts/servicio.sh status      # ¿está vivo? PID, uptime, CPU/RSS, health y nivel
+./scripts/servicio.sh start       # arrancar (idempotente: si vive, no hace nada)
+./scripts/servicio.sh restart     # después de cambiar código o config.env
+./scripts/servicio.sh logs -f     # ver el log en vivo (Ctrl+C para salir)
+```
+
+> ⚠️ `stop` **no es definitivo**: el guardián de proceso lo revive en ≤ 2 minutos. Para apagarlo
+> de verdad hay que hacer `boot-disable` y después `stop`.
+
+Manual completo de operación, acceso SSH, checklist de feria y resolución de problemas:
+**[`docs/servicio.md`](docs/servicio.md)**.
 
 ---
 
@@ -869,6 +895,7 @@ vigia-caminante-unoq/
 ├── docs/
 │   ├── datasheet.md              ← manual de usuario completo
 │   ├── developer.md              ← guía para modificar el código
+│   ├── servicio.md               ← operación real en la placa: arranque, guardianes, feria
 │   └── BITACORA.md               ← decisiones, tropiezos y lecciones
 │
 └── data/                         ← runtime, NO versionado
@@ -982,6 +1009,7 @@ feria no puede morir por un frame raro.
 |---|---|
 | **README.md** (este archivo) | Quien llega al proyecto y quiere entenderlo y levantarlo |
 | [`docs/datasheet.md`](docs/datasheet.md) | Manual de usuario: operación paso a paso, calibración, problemas |
+| [`docs/servicio.md`](docs/servicio.md) | Runbook de la placa: SSH, servicio, guardianes, checklist de feria, apagado |
 | [`docs/developer.md`](docs/developer.md) | Guía de código: módulos, hilos, fórmulas, API, cómo extender |
 | [`docs/BITACORA.md`](docs/BITACORA.md) | Decisiones, tropiezos y lecciones para el próximo proyecto |
 

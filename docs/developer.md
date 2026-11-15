@@ -972,8 +972,8 @@ Qué hace, en orden:
 | `restart` | `stop` + `start` |
 | `status` | PID, `etime`, `%cpu`, RSS, `/health`, nivel/score/fps, estado de cron |
 | `logs [N\|-f]` | `tail -n N` (60 por defecto) o `tail -f` |
-| `boot-enable` | Agrega `@reboot sleep 20; .../servicio.sh start` al crontab |
-| `boot-disable` | Quita esa línea del crontab |
+| `boot-enable` | Agrega `@reboot sleep 20; .../servicio.sh start` al crontab (solo esa línea) |
+| `boot-disable` | Quita **todas** las líneas del Vigía: `@reboot` + guardián de proceso + guardián de salud |
 
 Detalles finos:
 
@@ -983,8 +983,14 @@ Detalles finos:
   `RotatingFileHandler`, I-012).
 - **Puerto leído de `config.env`** con `sed` (no hardcodeado).
 - **`boot-enable` es idempotente**: usa una marca (`vigia-caminante-unoq/scripts/servicio.sh`) y
-  filtra la línea previa antes de agregar.
+  filtra la línea previa antes de agregar. **No agrega los guardianes**: esos viven en el crontab
+  y se instalaron aparte (`*/2` llama a `start`; `*/10` consulta `/health` y hace `restart`).
+- **`boot-disable` borra las tres líneas** porque filtra por la misma marca; deja intactas las
+  líneas de los otros servicios.
 - **Retardo de 20 s** en `@reboot` para que WiFi y el sistema de archivos estén listos.
+- **El guardián de salud hardcodea el puerto 8030** (`curl http://127.0.0.1:8030/health`). Si se
+  cambia `PS_PORT`, hay que editar el crontab; el script no lo actualiza.
+- Operación y diagnóstico en la placa: [`servicio.md`](servicio.md).
 
 ### Verificación post-despliegue
 

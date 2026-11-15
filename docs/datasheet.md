@@ -5,7 +5,8 @@
 Este documento es el manual de operación. Explica qué es el sistema, qué hace falta para
 ponerlo a andar, cómo leer lo que muestra, cómo calibrarlo y qué hacer cuando algo no funciona.
 Para entender el código, ver [`developer.md`](developer.md). Para el relato de decisiones y
-tropiezos, ver [`BITACORA.md`](BITACORA.md).
+tropiezos, ver [`BITACORA.md`](BITACORA.md). Para la operación real del servicio en la placa
+(SSH, guardianes, checklist de feria y apagado), ver [`servicio.md`](servicio.md).
 
 ---
 
@@ -208,6 +209,18 @@ Si dice `DETENIDO`:
 ./scripts/servicio.sh start
 ./scripts/servicio.sh logs 60
 ```
+
+> 💡 **Los guardianes ya están instalados.** Además del `@reboot`, hay un cron cada 2 minutos
+> que llama a `start` (si el PID vive, no hace nada) y otro cada 10 minutos que consulta
+> `/health` y hace `restart` si no responde. Por eso, si el proceso muere, vuelve solo en
+> **≤ 2 minutos**; si se cuelga, en **≤ 10 minutos**. Para confirmar que están las tres líneas:
+>
+> ```bash
+> crontab -l | grep vigia-caminante-unoq
+> ```
+>
+> El campo `Arranque` de `status` solo indica que hay alguna línea del Vigía, no que estén los
+> guardianes. Detalle completo en [`servicio.md`](servicio.md#4-arranque-automático-y-guardianes).
 
 ### 4.4 Abrir la página
 
@@ -693,6 +706,11 @@ ss -ltn | grep 8030          # debe estar vacío
 ./scripts/servicio.sh start
 ```
 
+> ⚠️ **El guardián de salud tiene hardcodeado `http://127.0.0.1:8030/health`.** Si cambiás
+> `PS_PORT`, también tenés que editar esa línea del crontab (`crontab -e`); si no, el guardián
+> reiniciará el servicio cada 10 minutos intentando consultar el puerto viejo. Ver
+> [`servicio.md`](servicio.md#83-el-puerto-8030-está-ocupado).
+
 ### 10.6 El servicio no arranca
 
 ```bash
@@ -763,7 +781,7 @@ curl -s -X POST http://192.168.1.5:8030/api/config \
 | Puerto | **8030/TCP** (8000, 8010 y 8020 están ocupados por otros servicios de la placa) |
 | Hilos | 5 (cámara, demo, visión, HTTP, watchdog) |
 | Usuario | `arduino` (sin `sudo`) |
-| Arranque automático | `cron @reboot` con 20 s de retardo |
+| Arranque automático | `cron @reboot` con 20 s de retardo + guardián de proceso cada 2 min + guardián de salud cada 10 min |
 | PID | `data/vigia.pid` |
 | Log principal | `data/vigia.log` (5 MB × 2 backups) |
 | Log de stdout | `data/vigia.stdout.log` |
@@ -853,7 +871,13 @@ cd /home/jma/proyectos/vigia-caminante-unoq
 ./scripts/desplegar.sh
 ```
 
-El script conserva `config.env` y `data/` en la placa, y reinicia el servicio.
+El script conserva `config.env` y `data/` en la placa, y reinicia el servicio. Usa `tar` por
+SSH porque la placa **no tiene `rsync`**.
+
+> ⚠️ `desplegar.sh` reescribe `CAM_URL` y `PS_PORT` en `config.env` en cada ejecución. Si los
+> cambiaste a mano, pasalos como variables (`CAM_URL=… PS_PORT=… ./scripts/desplegar.sh`) o se
+> perderán. Después del despliegue, `./scripts/servicio.sh status` debe decir `ACTIVO`; esperá
+> 15–20 s antes de recargar la página. Runbook completo en [`servicio.md`](servicio.md#6-actualizar-el-servicio).
 
 ---
 
@@ -909,7 +933,7 @@ tenga **Linux + Python 3 + OpenCV**, no de que sea "Arduino".
 |---|---|
 | Al abrir | `servicio.sh status`; limpiar el lente del teléfono; confirmar borde verde |
 | Cada 2 h | Mirar `logs 20` por si hay reconexiones; verificar batería del teléfono |
-| Al cerrar | `servicio.sh stop` o dejar corriendo (consume ~130 % de CPU) |
+| Al cerrar | Dejar corriendo (consume ~130 % de CPU), o apagar de verdad con `servicio.sh boot-disable` y después `servicio.sh stop`; un `stop` solo se revive en ≤ 2 min |
 | Después de la feria | Respaldar `config.env` si se calibró; revisar `data/vigia.log` |
 
 ### Rutina semanal
